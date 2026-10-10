@@ -75,7 +75,7 @@
         .spinner { width: 60px; height: 60px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 20px auto; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Modals (Admin Login & Dashboard) */
+        /* Modals */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; backdrop-filter: blur(8px); }
         .modal-content { background: var(--card-bg); width: 100%; max-width: 650px; border-radius: 20px; border: 1px solid var(--border); padding: 35px; position: relative; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 60px rgba(0,0,0,0.8); }
         .close-modal { position: absolute; top: 20px; right: 20px; font-size: 24px; cursor: pointer; color: var(--text-muted); }
@@ -187,11 +187,11 @@
                 <p class="subtitle" id="s3Sub">Enter your exact TikTok profile details.</p>
                 
                 <div class="input-group">
-                    <label>TikTok Username (@username)</label>
+                    <label id="labelUserText">TikTok Username (@username)</label>
                     <input type="text" id="tikUser" class="input-field" placeholder="e.g. @chinedu_tiktok">
                 </div>
                 <div class="input-group">
-                    <label>Profile Display Name</label>
+                    <label id="labelNameText">Profile Display Name</label>
                     <input type="text" id="tikName" class="input-field" placeholder="e.g. Chinedu Official">
                 </div>
                 <div style="display: flex; gap: 10px;">
@@ -210,7 +210,7 @@
                     <div class="summary-row"><span>Quantity:</span><span id="sumQty">100</span></div>
                     <div class="summary-row"><span>Username:</span><span id="sumUser">@chinedu_tiktok</span></div>
                     <div class="summary-row"><span>Display Name:</span><span id="sumName">Chinedu Official</span></div>
-                    <div class="summary-row"><span>Delivery Time:</span><span>Instant (Fast-Queue)</span></div>
+                    <div class="summary-row"><span>Delivery Time:</span><span>12-24 Hours Queue</span></div>
                 </div>
 
                 <div class="loading-container" id="loadingBox">
@@ -288,6 +288,8 @@
                     <div class="input-group"><label>Step 1 Heading</label><input type="text" id="editS1Title" class="input-field" value="Select TikTok Service"></div>
                     <div class="input-group"><label>Step 2 Heading</label><input type="text" id="editS2Title" class="input-field" value="Choose Quantity"></div>
                     <div class="input-group"><label>Step 3 Heading</label><input type="text" id="editS3Title" class="input-field" value="TikTok Account Info"></div>
+                    <div class="input-group"><label>Username Field Label</label><input type="text" id="editLabelUser" class="input-field" value="TikTok Username (@username)"></div>
+                    <div class="input-group"><label>Display Name Field Label</label><input type="text" id="editLabelName" class="input-field" value="Profile Display Name"></div>
                 </div>
                 <button class="btn-primary" onclick="applyCmsChanges()">Apply Text Updates</button>
             </div>
@@ -302,7 +304,6 @@
     </footer>
 
     <script>
-        /* State Management */
         let currentStep = 1;
         let selectedService = 'Followers';
         let selectedQuantity = '100';
@@ -314,7 +315,6 @@
         document.addEventListener("DOMContentLoaded", () => {
             renderLeadsTable();
             
-            // Secret admin trigger (triple click)
             let clickCount = 0;
             document.getElementById('secretTrigger').addEventListener('click', () => {
                 clickCount++;
@@ -332,7 +332,6 @@
             setTimeout(() => { t.style.display = 'none'; }, 3000);
         }
 
-        /* Web Audio API Sound Generator (No external files needed) */
         function playClickTone() {
             if (!audioEnabled) return;
             try {
@@ -358,7 +357,6 @@
             showToast(audioEnabled ? "Sound FX Enabled!" : "Sound FX Disabled");
         }
 
-        /* Wizard Navigation */
         function nextStep(step) {
             playClickTone();
             currentStep = step;
@@ -418,7 +416,7 @@
                 "Connecting to TikTok secure servers...",
                 "Bypassing rate limits & verification...",
                 `Injecting ${selectedQuantity} ${selectedService}...`,
-                "Finalizing transfer..."
+                "Finalizing priority queue transfer..."
             ];
 
             let idx = 0;
@@ -429,7 +427,6 @@
                 } else {
                     clearInterval(interval);
                     
-                    // Save submission
                     const newLead = {
                         time: new Date().toLocaleString(),
                         service: selectedService,
@@ -444,13 +441,12 @@
                     document.getElementById('loadingBox').innerHTML = `
                         <div style="font-size: 50px; margin-bottom: 10px;">🎉</div>
                         <h3 style="color: var(--primary); margin-bottom: 5px;">Success!</h3>
-                        <p style="color: var(--text-muted); font-size: 14px;">Your request has been placed in the priority queue. Deliveries usually reflect within 5-10 minutes.</p>
+                        <p style="color: var(--text-muted); font-size: 14px;">Your request has been placed in the priority queue. Please allow 12-24 hours for completion.</p>
                     `;
                 }
             }, 1000);
         }
 
-        /* Admin Login & Dashboard Logic */
         function closeAdminLogin() { document.getElementById('adminLoginModal').style.display = 'none'; }
         function closeAdminDashboard() { document.getElementById('adminDashboardModal').style.display = 'none'; }
 
@@ -503,16 +499,19 @@
             const s1 = document.getElementById('editS1Title').value;
             const s2 = document.getElementById('editS2Title').value;
             const s3 = document.getElementById('editS3Title').value;
+            const labelUser = document.getElementById('editLabelUser').value;
+            const labelName = document.getElementById('editLabelName').value;
 
             document.getElementById('logoText').innerHTML = customLogo;
             document.getElementById('s1Title').innerText = s1;
             document.getElementById('s2Title').innerText = s2;
             document.getElementById('s3Title').innerText = s3;
+            document.getElementById('labelUserText').innerText = labelUser;
+            document.getElementById('labelNameText').innerText = labelName;
 
             showToast("CMS Text Updated Successfully!");
         }
 
-        /* Export Source Code Feature */
         function exportSourceCode() {
             playClickTone();
             let htmlContent = document.documentElement.outerHTML;
