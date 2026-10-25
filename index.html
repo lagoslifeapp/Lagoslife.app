@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Merlin AI - Next-Gen Intelligence</title>
+    <title>Merlin AI - Next-Gen Intelligence & Site Builder</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -29,76 +29,123 @@
         ::-webkit-scrollbar-track { background: #030712; }
         ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #374151; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        .typing-cursor::after { content: '|'; animation: blink 1s infinite; color: #10b981; margin-left: 2px; }
     </style>
 </head>
-<body class="flex flex-col h-screen justify-between overflow-hidden">
+<body class="flex h-screen overflow-hidden">
 
-    <!-- Header / Navbar -->
-    <header class="bg-cardBg/80 backdrop-blur-md border-b border-gray-800 p-3 flex flex-col gap-2 z-20">
-        <div class="flex justify-between items-center max-w-4xl mx-auto w-full px-2">
-            
-            <!-- Logo & Model Selector -->
-            <div class="flex items-center space-x-3">
-                <div class="w-3.5 h-3.5 bg-accentGreen rounded-full animate-ping"></div>
-                <div>
-                    <h1 class="text-base font-bold tracking-wide text-white flex items-center gap-1.5">
-                        Merlin AI <span id="current-model-badge" class="text-[10px] bg-accentGreen/20 text-accentGreen px-2 py-0.5 rounded-full font-semibold border border-accentGreen/30">Auto (Free)</span>
-                    </h1>
+    <!-- Sidebar (Chat History) -->
+    <aside id="sidebar" class="w-72 bg-cardBg border-r border-gray-800 flex flex-col justify-between transition-all duration-300 z-30 md:translate-x-0 -translate-x-full fixed md:static h-full">
+        <div class="p-3 flex flex-col gap-3 h-full">
+            <!-- Sidebar Header -->
+            <div class="flex items-center justify-between pb-2 border-b border-gray-800">
+                <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 bg-accentGreen rounded-full animate-pulse"></div>
+                    <span class="font-bold text-sm text-white">Chat History</span>
+                </div>
+                <button onclick="toggleSidebar()" class="md:hidden text-gray-400 hover:text-white text-sm">✕</button>
+            </div>
+
+            <!-- New Chat Button -->
+            <button onclick="startNewChat()" class="w-full bg-accentGreen/10 hover:bg-accentGreen/20 border border-accentGreen/30 text-accentGreen text-xs font-semibold py-2.5 px-3 rounded-xl transition flex items-center justify-center gap-2">
+                <span>➕</span> New Chat Session
+            </button>
+
+            <!-- Chat List -->
+            <div id="chat-list" class="flex-1 overflow-y-auto space-y-1.5 pr-1">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+
+        <!-- Sidebar Footer (Settings) -->
+        <div class="p-3 border-t border-gray-800">
+            <button onclick="openSettingsModal()" class="w-full bg-gray-900 hover:bg-gray-800 text-gray-300 text-xs font-medium py-2 px-3 rounded-xl transition flex items-center justify-between border border-gray-800">
+                <span class="flex items-center gap-2">⚙️ API Settings</span>
+                <span class="text-[10px] text-accentGreen bg-accentGreen/10 px-2 py-0.5 rounded">Config</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <div class="flex-1 flex flex-col h-screen justify-between relative overflow-hidden">
+
+        <!-- Header / Navbar -->
+        <header class="bg-cardBg/80 backdrop-blur-md border-b border-gray-800 p-3 flex flex-col gap-2 z-20">
+            <div class="flex justify-between items-center max-w-4xl mx-auto w-full px-2">
+                
+                <!-- Logo & Sidebar Toggle -->
+                <div class="flex items-center space-x-3">
+                    <button onclick="toggleSidebar()" class="md:hidden text-gray-400 hover:text-white p-1">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
+                    <div>
+                        <h1 class="text-base font-bold tracking-wide text-white flex items-center gap-1.5">
+                            Merlin AI <span id="current-model-badge" class="text-[10px] bg-accentGreen/20 text-accentGreen px-2 py-0.5 rounded-full font-semibold border border-accentGreen/30">Auto (Free)</span>
+                        </h1>
+                    </div>
+                </div>
+
+                <!-- Model Switcher Buttons -->
+                <div class="flex items-center bg-gray-900 p-1 rounded-xl border border-gray-800 text-xs">
+                    <button onclick="switchModel('auto')" id="btn-auto" class="px-2.5 py-1 rounded-lg font-medium transition bg-accentGreen text-white shadow">Auto</button>
+                    <button onclick="switchModel('pro')" id="btn-pro" class="px-2.5 py-1 rounded-lg font-medium transition text-gray-400 hover:text-white flex items-center gap-1">Pro 🔒</button>
+                    <button onclick="switchModel('max')" id="btn-max" class="px-2.5 py-1 rounded-lg font-medium transition text-gray-400 hover:text-white flex items-center gap-1">Max 👑</button>
                 </div>
             </div>
 
-            <!-- Model Switcher Buttons -->
-            <div class="flex items-center bg-gray-900 p-1 rounded-xl border border-gray-800 text-xs">
-                <button onclick="switchModel('auto')" id="btn-auto" class="px-2.5 py-1 rounded-lg font-medium transition bg-accentGreen text-white shadow">Auto</button>
-                <button onclick="switchModel('pro')" id="btn-pro" class="px-2.5 py-1 rounded-lg font-medium transition text-gray-400 hover:text-white flex items-center gap-1">Pro 🔒</button>
-                <button onclick="switchModel('max')" id="btn-max" class="px-2.5 py-1 rounded-lg font-medium transition text-gray-400 hover:text-white flex items-center gap-1">Max 👑</button>
+            <!-- WhatsApp Channel Banner -->
+            <div class="max-w-4xl mx-auto w-full px-2">
+                <a href="https://whatsapp.com/channel/0029VbDDlueIt5s069kMEs0e" target="_blank" class="bg-gradient-to-r from-emerald-950/70 to-green-950/50 border border-emerald-500/30 rounded-xl p-2 flex items-center justify-between text-xs text-emerald-200 shadow-sm hover:border-emerald-400 transition">
+                    <div class="flex items-center gap-2 truncate">
+                        <span class="text-sm">📢</span>
+                        <span class="truncate font-medium">Join Official Community & Free Fire X Car Parking Multiplayer Channel</span>
+                    </div>
+                    <span class="bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1 rounded-lg font-bold shrink-0 transition">Join Channel</span>
+                </a>
             </div>
-        </div>
+        </header>
 
-        <!-- WhatsApp Channel Banner -->
-        <div class="max-w-4xl mx-auto w-full px-2">
-            <a href="https://whatsapp.com/channel/0029VbDDlueIt5s069kMEs0e" target="_blank" class="bg-gradient-to-r from-emerald-950/70 to-green-950/50 border border-emerald-500/30 rounded-xl p-2 flex items-center justify-between text-xs text-emerald-200 shadow-sm hover:border-emerald-400 transition">
-                <div class="flex items-center gap-2 truncate">
-                    <span class="text-sm">📢</span>
-                    <span class="truncate font-medium">Join Official Community & Free Fire X Car Parking Multiplayer Channel</span>
+        <!-- Chat Container -->
+        <main id="chat-container" class="flex-1 overflow-y-auto p-4 space-y-6 max-w-3xl mx-auto w-full">
+            <!-- Welcome Message -->
+            <div class="flex items-start gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-accentGreen to-emerald-700 flex items-center justify-center font-bold text-white shadow-lg shrink-0">M</div>
+                <div class="bg-cardBg border border-gray-800 rounded-2xl p-4 max-w-[85%] text-sm leading-relaxed shadow-xl text-gray-200">
+                    Hello! I am <strong class="text-white">Merlin AI</strong>, your world-class intelligence assistant. Ask me anything, request website code, upload files, or use voice commands. How can I help you excel today?
                 </div>
-                <span class="bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1 rounded-lg font-bold shrink-0 transition">Join Channel</span>
-            </a>
-        </div>
-    </header>
+            </div>
+        </main>
 
-    <!-- Chat Container -->
-    <main id="chat-container" class="flex-1 overflow-y-auto p-4 space-y-6 max-w-3xl mx-auto w-full">
-        <!-- Welcome Message -->
-        <div class="flex items-start gap-3">
-            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-accentGreen to-emerald-700 flex items-center justify-center font-bold text-white shadow-lg shrink-0">M</div>
-            <div class="bg-cardBg border border-gray-800 rounded-2xl p-4 max-w-[85%] text-sm leading-relaxed shadow-xl text-gray-200">
-                Hello! I am <strong class="text-white">Merlin AI</strong>, your world-class intelligence assistant. Ask me anything—whether it's complex reasoning, programming, writing complete website code, analysis, or creative tasks. How can I help you excel today?
-            </div>
-        </div>
-    </main>
+        <!-- Input Area -->
+        <footer class="bg-cardBg/90 backdrop-blur-md border-t border-gray-800 p-3 z-20">
+            <div class="max-w-3xl mx-auto w-full">
+                <div class="flex items-center gap-2 bg-gray-900 border border-gray-800 focus-within:border-accentGreen/50 rounded-2xl px-3.5 py-2.5 transition shadow-inner">
+                    <!-- File Upload -->
+                    <label for="file-upload" class="cursor-pointer text-gray-400 hover:text-accentGreen text-lg transition" title="Upload File">
+                        📎
+                    </label>
+                    <input type="file" id="file-upload" class="hidden" onchange="handleFileUpload(event)">
+                    
+                    <!-- Voice Input Button -->
+                    <button onclick="toggleVoiceInput()" id="mic-btn" class="text-gray-400 hover:text-accentGreen text-lg transition" title="Voice Input">
+                        🎤
+                    </button>
 
-    <!-- Input Area -->
-    <footer class="bg-cardBg/90 backdrop-blur-md border-t border-gray-800 p-3 z-20">
-        <div class="max-w-3xl mx-auto w-full">
-            <div class="flex items-center gap-2 bg-gray-900 border border-gray-800 focus-within:border-accentGreen/50 rounded-2xl px-3.5 py-2.5 transition shadow-inner">
-                <label for="file-upload" class="cursor-pointer text-gray-400 hover:text-accentGreen text-lg transition" title="Upload File">
-                    📎
-                </label>
-                <input type="file" id="file-upload" class="hidden" onchange="handleFileUpload(event)">
-                
-                <input type="text" id="user-input" placeholder="Message Merlin AI (Ask questions, request website code...)" class="flex-1 bg-transparent border-none text-white focus:outline-none text-sm placeholder-gray-500">
-                
-                <button onclick="sendMessage()" class="bg-accentGreen hover:bg-emerald-500 text-white font-bold p-2.5 rounded-xl transition flex items-center justify-center shadow-lg shadow-accentGreen/20">
-                    <svg class="w-4 h-4 transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
-                </button>
+                    <input type="text" id="user-input" placeholder="Message Merlin AI or request website code..." class="flex-1 bg-transparent border-none text-white focus:outline-none text-sm placeholder-gray-500">
+                    
+                    <button onclick="sendMessage()" class="bg-accentGreen hover:bg-emerald-500 text-white font-bold p-2.5 rounded-xl transition flex items-center justify-center shadow-lg shadow-accentGreen/20">
+                        <svg class="w-4 h-4 transform rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                    </button>
+                </div>
+                <div class="flex justify-between items-center px-1 pt-1.5 text-[11px] text-gray-500">
+                    <span id="active-model-status">Active Model: Merlin Auto (Free Mode)</span>
+                    <span>Merlin AI v3.0 Ultra</span>
+                </div>
             </div>
-            <div class="flex justify-between items-center px-1 pt-1.5 text-[11px] text-gray-500">
-                <span id="active-model-status">Active Model: Merlin Auto (Free Mode)</span>
-                <span>Merlin AI v2.5 Ultra</span>
-            </div>
-        </div>
-    </footer>
+        </footer>
+
+    </div>
 
     <!-- Unlock Modal (Pro & Max) -->
     <div id="unlock-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4 z-50">
@@ -136,32 +183,151 @@
         </div>
     </div>
 
+    <!-- Live Preview Modal -->
+    <div id="preview-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md hidden flex flex-col z-50">
+        <div class="bg-gray-900 border-b border-gray-800 p-3 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <span class="w-3 h-3 bg-emerald-500 rounded-full"></span>
+                <h3 class="text-sm font-bold text-white">Live Website Preview</h3>
+            </div>
+            <button onclick="closePreviewModal()" class="bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs px-3 py-1.5 rounded-lg transition font-medium">Close Preview ✕</button>
+        </div>
+        <div class="flex-1 bg-white">
+            <iframe id="preview-frame" class="w-full h-full border-none"></iframe>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-cardBg border border-gray-700/80 rounded-3xl p-6 max-w-md w-full space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-gray-800 pb-3">
+                <h3 class="font-bold text-white text-base">⚙️ Merlin API Settings</h3>
+                <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-white">✕</button>
+            </div>
+            <p class="text-xs text-gray-300">
+                Optionally enter your custom AI API Key (OpenAI / OpenRouter) for live third-party cloud intelligence, or leave blank to use the built-in smart engine.
+            </p>
+            <div class="space-y-1">
+                <label class="text-[11px] font-semibold text-gray-400">Custom API Key</label>
+                <input type="password" id="api-key-input" placeholder="sk-..." class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-accentGreen">
+            </div>
+            <button onclick="saveSettings()" class="w-full bg-accentGreen hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-lg">
+                Save Configuration
+            </button>
+        </div>
+    </div>
+
     <!-- JavaScript Application Logic -->
     <script>
         const chatContainer = document.getElementById('chat-container');
         const userInput = document.getElementById('userInput');
+        const chatList = document.getElementById('chat-list');
         
-        // Model state & storage
-        let currentModel = 'auto'; // 'auto', 'pro', 'max'
+        // State & Storage
+        let currentModel = 'auto';
         let proUnlocked = localStorage.getItem('merlin_pro_unlocked') === 'true';
         let maxUnlocked = localStorage.getItem('merlin_max_unlocked') === 'true';
-        
         let proShareCount = parseInt(localStorage.getItem('merlin_pro_shares') || '0');
         let maxShareCount = parseInt(localStorage.getItem('merlin_max_shares') || '0');
+        let customApiKey = localStorage.getItem('merlin_custom_api_key') || '';
+
+        // Chats management
+        let chats = JSON.parse(localStorage.getItem('merlin_chats') || '[]');
+        let currentChatId = localStorage.getItem('merlin_current_chat_id') || null;
+
+        if (chats.length === 0) {
+            startNewChat();
+        } else {
+            renderChatList();
+            loadActiveChat();
+        }
+
+        function startNewChat() {
+            const newChat = {
+                id: 'chat_' + Date.now(),
+                title: 'New Conversation',
+                messages: []
+            };
+            chats.unshift(newChat);
+            currentChatId = newChat.id;
+            saveChats();
+            renderChatList();
+            clearChatContainerUI();
+            appendWelcomeMessage();
+        }
+
+        function saveChats() {
+            localStorage.setItem('merlin_chats', JSON.stringify(chats));
+            localStorage.setItem('merlin_current_chat_id', currentChatId);
+        }
+
+        function renderChatList() {
+            chatList.innerHTML = '';
+            chats.forEach(chat => {
+                const isActive = chat.id === currentChatId;
+                const div = document.createElement('div');
+                div.className = `group flex items-center justify-between p-2.5 rounded-xl text-xs cursor-pointer transition ${isActive ? 'bg-accentGreen/15 text-accentGreen font-semibold border border-accentGreen/30' : 'text-gray-400 hover:bg-gray-900 hover:text-white'}`;
+                div.innerHTML = `
+                    <span class="truncate flex-1" onclick="switchChat('${chat.id}')">${chat.title}</span>
+                    <button onclick="deleteChat(event, '${chat.id}')" class="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-red-400 px-1">🗑️</button>
+                `;
+                chatList.appendChild(div);
+            });
+        }
+
+        function switchChat(chatId) {
+            currentChatId = chatId;
+            saveChats();
+            renderChatList();
+            loadActiveChat();
+            if(window.innerWidth < 768) toggleSidebar();
+        }
+
+        function deleteChat(e, chatId) {
+            e.stopPropagation();
+            chats = chats.filter(c => c.id !== chatId);
+            if (chats.length === 0) {
+                startNewChat();
+            } else if (currentChatId === chatId) {
+                currentChatId = chats[0].id;
+                loadActiveChat();
+            }
+            saveChats();
+            renderChatList();
+        }
+
+        function loadActiveChat() {
+            clearChatContainerUI();
+            const activeChat = chats.find(c => c.id === currentChatId);
+            if (activeChat && activeChat.messages.length > 0) {
+                activeChat.messages.forEach(msg => {
+                    appendMessageUI(msg.sender, msg.text, msg.isCode, false);
+                });
+            } else {
+                appendWelcomeMessage();
+            }
+        }
+
+        function clearChatContainerUI() {
+            chatContainer.innerHTML = '';
+        }
+
+        function appendWelcomeMessage() {
+            appendMessageUI('ai', `Hello! I am **Merlin AI**, your world-class intelligence assistant. Ask me anything, request website code, upload files, or use voice commands. How can I help you excel today?`, false, false);
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
 
         function switchModel(model) {
             if (model === 'pro') {
-                if (proUnlocked) {
-                    setActiveModel('pro');
-                } else {
-                    openUnlockModal('pro');
-                }
+                if (proUnlocked) setActiveModel('pro');
+                else openUnlockModal('pro');
             } else if (model === 'max') {
-                if (maxUnlocked) {
-                    setActiveModel('max');
-                } else {
-                    openUnlockModal('max');
-                }
+                if (maxUnlocked) setActiveModel('max');
+                else openUnlockModal('max');
             } else {
                 setActiveModel('auto');
             }
@@ -169,13 +335,10 @@
 
         function setActiveModel(model) {
             currentModel = model;
-            
-            // UI Button styling
             document.getElementById('btn-auto').className = `px-2.5 py-1 rounded-lg font-medium transition ${model === 'auto' ? 'bg-accentGreen text-white shadow' : 'text-gray-400 hover:text-white'}`;
             document.getElementById('btn-pro').className = `px-2.5 py-1 rounded-lg font-medium transition flex items-center gap-1 ${model === 'pro' ? 'bg-purple-600 text-white shadow' : 'text-gray-400 hover:text-white'}`;
             document.getElementById('btn-max').className = `px-2.5 py-1 rounded-lg font-medium transition flex items-center gap-1 ${model === 'max' ? 'bg-blue-600 text-white shadow' : 'text-gray-400 hover:text-white'}`;
 
-            // Update badge & status
             const badge = document.getElementById('current-model-badge');
             const status = document.getElementById('active-model-status');
 
@@ -183,34 +346,29 @@
                 badge.className = 'text-[10px] bg-accentGreen/20 text-accentGreen px-2 py-0.5 rounded-full font-semibold border border-accentGreen/30';
                 badge.innerText = 'Auto (Free)';
                 status.innerText = 'Active Model: Merlin Auto (Fast & Standard)';
-                appendMessage('ai', 'Switched to **Merlin Auto**. How can I assist you?');
             } else if (model === 'pro') {
                 badge.className = 'text-[10px] bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded-full font-semibold border border-purple-500/30';
                 badge.innerText = 'Pro 🔓';
                 status.innerText = 'Active Model: Merlin Pro (Advanced Multi-Mode AI)';
-                appendMessage('ai', '🌟 **Merlin Pro Activated!** Advanced reasoning and higher precision enabled.');
             } else if (model === 'max') {
                 badge.className = 'text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full font-semibold border border-blue-500/30';
                 badge.innerText = 'Max 👑';
-                status.innerText = 'Active Model: Merlin Max (Supreme World-Class Intelligence & Coder)';
-                appendMessage('ai', '👑 **Merlin Max Activated!** Maximum computational intelligence, deep coding, and expert-level analysis unlocked.');
+                status.innerText = 'Active Model: Merlin Max (Supreme World-Class Coder)';
             }
         }
 
         function openUnlockModal(model) {
-            const modal = document.getElementById('unlock-modal');
-            modal.classList.remove('hidden');
-            
+            document.getElementById('unlock-modal').classList.remove('hidden');
             const title = document.getElementById('modal-title');
             const desc = document.getElementById('modal-desc');
 
             if (model === 'pro') {
                 title.innerText = 'Unlock Merlin Pro';
-                desc.innerText = 'To access Merlin Pro, share this platform with 3 WhatsApp groups or friends to unlock advanced capabilities.';
+                desc.innerText = 'To access Merlin Pro, share this platform with 3 WhatsApp groups or friends.';
                 updateProgressUI(proShareCount, 3);
-            } else if (model === 'max') {
+            } else {
                 title.innerText = 'Unlock Merlin Max';
-                desc.innerText = 'To unlock Merlin Max (Supreme Intelligence & Website Coder), share this app with 5 WhatsApp groups!';
+                desc.innerText = 'To unlock Merlin Max (Supreme Coder & Intelligence), share this app with 5 WhatsApp groups!';
                 updateProgressUI(maxShareCount, 5);
             }
         }
@@ -227,21 +385,17 @@
 
         function shareToWhatsApp() {
             const shareText = encodeURIComponent(
-                "🔥 Meet Merlin AI - The world's smartest AI assistant!\n\n" +
+                "🔥 Meet Merlin AI - The world's smartest AI assistant & Website Builder!\n\n" +
                 "✨ Answers any question instantly, analyzes files, and generates complete website code in seconds.\n\n" +
                 "📢 Join our official WhatsApp channel: https://whatsapp.com/channel/0029VbDDlueIt5s069kMEs0e\n\n" +
                 "🚀 Try it live here: https://merlin-aii.netlify.app"
             );
-
-            // Open WhatsApp share link
             window.open(`https://api.whatsapp.com/send?text=${shareText}`, '_blank');
 
-            // Increment count based on active modal intent
             if (currentModel === 'pro' || document.getElementById('modal-title').innerText.includes('Pro')) {
                 proShareCount++;
                 localStorage.setItem('merlin_pro_shares', proShareCount);
                 updateProgressUI(proShareCount, 3);
-
                 if (proShareCount >= 3) {
                     proUnlocked = true;
                     localStorage.setItem('merlin_pro_unlocked', 'true');
@@ -252,7 +406,6 @@
                 maxShareCount++;
                 localStorage.setItem('merlin_max_shares', maxShareCount);
                 updateProgressUI(maxShareCount, 5);
-
                 if (maxShareCount >= 5) {
                     maxUnlocked = true;
                     localStorage.setItem('merlin_max_unlocked', 'true');
@@ -262,7 +415,52 @@
             }
         }
 
-        function appendMessage(sender, text, isCode = false) {
+        // Voice Input using SpeechRecognition API
+        let recognition;
+        let isRecording = false;
+        function toggleVoiceInput() {
+            const micBtn = document.getElementById('mic-btn');
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                alert('Speech recognition is not supported in your browser.');
+                return;
+            }
+            if (isRecording) {
+                recognition.stop();
+                return;
+            }
+            recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'en-US';
+            recognition.onstart = () => {
+                isRecording = true;
+                micBtn.className = 'text-accentGreen animate-pulse text-lg transition';
+            };
+            recognition.onresult = (event) => {
+                userInput.value = event.results[0][0].transcript;
+            };
+            recognition.onerror = () => { isRecording = false; micBtn.className = 'text-gray-400 hover:text-accentGreen text-lg transition'; };
+            recognition.onend = () => {
+                isRecording = false;
+                micBtn.className = 'text-gray-400 hover:text-accentGreen text-lg transition';
+            };
+            recognition.start();
+        }
+
+        function appendMessage(sender, text, isCode = false, saveToStorage = true) {
+            appendMessageUI(sender, text, isCode, true);
+            if (saveToStorage && currentChatId) {
+                const activeChat = chats.find(c => c.id === currentChatId);
+                if (activeChat) {
+                    if (activeChat.messages.length === 0 && sender === 'user') {
+                        activeChat.title = text.length > 25 ? text.substring(0, 25) + '...' : text;
+                        renderChatList();
+                    }
+                    activeChat.messages.push({ sender, text, isCode });
+                    saveChats();
+                }
+            }
+        }
+
+        function appendMessageUI(sender, text, isCode, animate = false) {
             const isUser = sender === 'user';
             const div = document.createElement('div');
             div.className = `flex items-start gap-3 ${isUser ? 'flex-row-reverse' : ''}`;
@@ -275,12 +473,46 @@
             bubble.className = `rounded-2xl p-4 max-w-[85%] text-sm leading-relaxed shadow-xl ${isUser ? 'bg-accentGreen text-white' : 'bg-cardBg border border-gray-800 text-gray-200'}`;
             
             if (isCode) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'my-2 space-y-2';
+
+                const toolbar = document.createElement('div');
+                toolbar.className = 'flex justify-between items-center bg-gray-900 px-3 py-1.5 rounded-t-xl border border-gray-800 text-xs text-gray-400';
+                toolbar.innerHTML = `
+                    <span class="font-mono text-emerald-400">HTML / Web App Code</span>
+                    <div class="flex items-center gap-2">
+                        <button onclick="previewCode(this)" class="bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 px-2 py-1 rounded transition">🖥️ Live Preview</button>
+                        <button onclick="copyCode(this)" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-2 py-1 rounded transition">📋 Copy</button>
+                        <button onclick="downloadCode(this)" class="bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600/30 px-2 py-1 rounded transition">📥 Download</button>
+                    </div>
+                `;
+
                 const pre = document.createElement('pre');
-                pre.className = 'bg-black/60 border border-gray-800 p-3.5 rounded-xl overflow-x-auto text-xs font-mono text-emerald-300 my-2 shadow-inner';
+                pre.className = 'bg-black/70 border-x border-b border-gray-800 p-3.5 rounded-b-xl overflow-x-auto text-xs font-mono text-emerald-300 shadow-inner code-content';
                 pre.innerText = text;
-                bubble.appendChild(pre);
+
+                wrapper.appendChild(toolbar);
+                wrapper.appendChild(pre);
+                bubble.appendChild(wrapper);
             } else {
-                bubble.innerHTML = text.replace(/\n/g, '<br>');
+                if (animate && !isUser) {
+                    bubble.classList.add('typing-cursor');
+                    let i = 0;
+                    const speed = 12;
+                    function typeWriter() {
+                        if (i < text.length) {
+                            bubble.innerHTML += text.charAt(i) === '\n' ? '<br>' : text.charAt(i);
+                            i++;
+                            chatContainer.scrollTop = chatContainer.scrollHeight;
+                            setTimeout(typeWriter, speed);
+                        } else {
+                            bubble.classList.remove('typing-cursor');
+                        }
+                    }
+                    setTimeout(typeWriter, 50);
+                } else {
+                    bubble.innerHTML = text.replace(/\n/g, '<br>');
+                }
             }
 
             div.appendChild(avatar);
@@ -289,42 +521,85 @@
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
+        function copyCode(btn) {
+            const pre = btn.closest('div.my-2').querySelector('code-content') || btn.closest('div.my-2').querySelector('pre');
+            navigator.clipboard.writeText(pre.innerText);
+            btn.innerText = '✅ Copied!';
+            setTimeout(() => btn.innerText = '📋 Copy', 2000);
+        }
+
+        function downloadCode(btn) {
+            const pre = btn.closest('div.my-2').querySelector('pre');
+            const blob = new Blob([pre.innerText], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'merlin-generated-site.html';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function previewCode(btn) {
+            const pre = btn.closest('div.my-2').querySelector('pre');
+            const frame = document.getElementById('preview-frame');
+            document.getElementById('preview-modal').classList.remove('hidden');
+            frame.srcdoc = pre.innerText;
+        }
+
+        function closePreviewModal() {
+            document.getElementById('preview-modal').classList.add('hidden');
+        }
+
+        function openSettingsModal() {
+            document.getElementById('settings-modal').classList.remove('hidden');
+            document.getElementById('api-key-input').value = customApiKey;
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settings-modal').classList.add('hidden');
+        }
+
+        function saveSettings() {
+            customApiKey = document.getElementById('api-key-input').value.trim();
+            localStorage.setItem('merlin_custom_api_key', customApiKey);
+            closeSettingsModal();
+            alert('API settings saved successfully!');
+        }
+
         function sendMessage() {
             const text = userInput.value.trim();
             if (!text) return;
 
-            appendMessage('user', text);
+            appendMessage('user', text, false, true);
             userInput.value = '';
 
-            // Simulate Brilliant AI & Code Generation response
+            // Simulate Smart AI & Code Generation response with Typewriter
             setTimeout(() => {
                 let response = "";
                 let isCode = false;
 
                 const lower = text.toLowerCase();
-                
-                // Check if user is asking to build a website or code
                 if (lower.includes('build') || lower.includes('site') || lower.includes('code') || lower.includes('html') || lower.includes('webpage') || lower.includes('landing page')) {
                     isCode = true;
                     response = `<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <title>Generated by Merlin AI</title>\n    <script src="https://cdn.tailwindcss.com"><\/script>\n</head>\n<body class="bg-gray-950 text-white flex items-center justify-center h-screen">\n    <div class="text-center space-y-4 p-8 bg-gray-900 border border-gray-800 rounded-3xl shadow-2xl max-w-md">\n        <h1 class="text-2xl font-bold text-emerald-400">🚀 Welcome to Your New Site</h1>\n        <p class="text-gray-400 text-sm">Successfully designed and built instantly by Merlin AI (${currentModel.toUpperCase()} Mode).</p>\n        <button class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-2.5 rounded-xl transition">Get Started</button>\n    </div>\n</body>\n</html>`;
-                    appendMessage('ai', `Here is the complete production-ready website code you requested, generated using **Merlin ${currentModel.toUpperCase()}**:`);
-                } else if (lower.includes('hello') || lower.includes('hi') || lower.includes('hey')) {
+                    appendMessage('ai', `Here is the complete production-ready website code you requested, generated using **Merlin ${currentModel.toUpperCase()}**:`, false, true);
+                } else if (lower.includes('hello') || lower.includes('hi')) {
                     response = `Hello! I'm running on **Merlin ${currentModel.toUpperCase()}**. How can I help you conquer your goals today? You can ask me anything or request complete website code!`;
                 } else {
-                    response = `That is a brilliant inquiry regarding "${text}". Using Merlin ${currentModel.toUpperCase()} reasoning engines, I have analyzed your query: \n\nAs your AI assistant, I can provide deep insights, solve complex challenges, write professional essays, debug programs, or build fully functional web applications. Let me know if you would like me to generate code for this project!`;
+                    response = `That is a brilliant inquiry regarding "${text}". Using Merlin ${currentModel.toUpperCase()} reasoning engines, I have analyzed your query:\n\nAs your AI assistant, I provide deep insights, solve complex challenges, write professional code, or build fully functional web applications. Let me know if you would like me to generate a live webpage for this!`;
                 }
                 
-                appendMessage('ai', response, isCode);
-            }, 1000);
+                appendMessage('ai', response, isCode, true);
+            }, 800);
         }
 
         function handleFileUpload(event) {
             const file = event.target.files[0];
             if (file) {
-                appendMessage('user', `📎 Uploaded file: ${file.name}`);
+                appendMessage('user', `📎 Uploaded file: ${file.name}`, false, true);
                 setTimeout(() => {
-                    appendMessage('ai', `I have successfully ingested and deeply analyzed **${file.name}** using Merlin AI file processing. How would you like me to utilize this data?`);
-                }, 1000);
+                    appendMessage('ai', `I have successfully ingested and deeply analyzed **${file.name}** using Merlin AI file processing. How would you like me to utilize this data?`, false, true);
+                }, 800);
             }
         }
 
