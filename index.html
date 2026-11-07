@@ -2755,6 +2755,39 @@ Click here: ${refLink}`;
                 showToast("Package deleted.");
             }
         }
-    </script>
+    
+        function openCheckout(productId) {
+            const p = products.find(x => x.id == productId || x.firestoreId == productId);
+            if(!p) return;
+            currentSelectedItem = p;
+            document.getElementById('checkoutItemTitle').innerHTML = `Item: <strong class="text-white">${p.title}</strong>`;
+            document.getElementById('checkoutItemPrice').innerText = `₦${Number(p.price).toLocaleString()}`;
+            
+            // Pre-fill saved UID if available
+            if(savedUserUids.length > 0) {
+                document.getElementById('custGameId').value = savedUserUids[0];
+                document.getElementById('quickSelectUidBtn').classList.remove('hidden');
+            } else {
+                document.getElementById('quickSelectUidBtn').classList.add('hidden');
+            }
+            
+            if(currentUser) {
+                document.getElementById('custName').value = currentUser.displayName || currentUser.email.split('@')[0];
+            }
+            
+            nextCheckoutStep(1);
+            openModal('checkoutModal');
+        }
+
+        function nextCheckoutStep(step) {
+            ['checkoutStep1', 'checkoutStep2', 'checkoutStep3'].forEach(s => document.getElementById(s).classList.add('hidden'));
+            document.getElementById(`checkoutStep${step}`).classList.remove('hidden');
+        }
+
+        function prevCheckoutStep(step) {
+            nextCheckoutStep(step);
+        }
+    
+</script>
 </body>
 </html>
