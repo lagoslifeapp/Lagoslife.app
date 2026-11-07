@@ -1442,20 +1442,32 @@ Join the platform and top up your favorite games here: ${officialSiteUrl}`);
             if(!db) return;
             
             db.collection("products").onSnapshot(snapshot => {
-                if(!snapshot.empty) {
-                    products = [];
-                    snapshot.forEach(doc => {
-                        products.push({ firestoreId: doc.id, ...doc.data() });
-                    });
-                    renderCatalog();
-                    if(document.getElementById('adminDashboardModal').classList.contains('flex')) {
-                        renderAdminProducts();
+                // Always ensure defaultProducts (including new game packages) are present or merged
+                let cloudProducts = [];
+                snapshot.forEach(doc => {
+                    cloudProducts.push({ firestoreId: doc.id, ...doc.data() });
+                });
+                
+                // Merge defaultProducts with cloudProducts so new items are never lost
+                let merged = [...defaultProducts];
+                cloudProducts.forEach(cp => {
+                    let idx = merged.findIndex(m => m.id == cp.id || m.firestoreId == cp.firestoreId);
+                    if(idx !== -1) {
+                        merged[idx] = cp; // take cloud version (like updated prices)
+                    } else {
+                        merged.push(cp);
                     }
-                } else {
-                    defaultProducts.forEach(p => {
-                        db.collection("products").doc(p.id.toString()).set(p);
-                    });
+                });
+                products = merged;
+                renderCatalog();
+                if(document.getElementById('adminDashboardModal').classList.contains('flex')) {
+                    renderAdminProducts();
                 }
+            });
+
+            // Also upsert all defaultProducts to Firestore so they exist in cloud database
+            defaultProducts.forEach(p => {
+                db.collection("products").doc(p.id.toString()).set(p, { merge: true });
             });
 
             db.collection("quotes").onSnapshot(snapshot => {
